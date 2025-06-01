@@ -1,11 +1,11 @@
-# rechtspraak_sync.py
-
+# STEP 1: create a persistent checkpoint file
+# This will track what we've already processed so we can continue later
 import os
 import json
 import time
 import requests
 import xml.etree.ElementTree as ET
-from datasets import Dataset
+from datasets import Dataset, DatasetDict
 from huggingface_hub import login
 import re
 
@@ -14,40 +14,55 @@ HF_REPO = "vGassen/dutch-public-domain-texts"
 API_URL = "https://data.rechtspraak.nl/uitspraken/zoeken"
 CONTENT_URL = "https://data.rechtspraak.nl/uitspraken/content"
 
+# Load checkpoint if available
 def load_checkpoint():
     if os.path.exists(CHECKPOINT_FILE):
         with open(CHECKPOINT_FILE, "r", encoding="utf-8") as f:
             return json.load(f)
     return {"last_published": None, "done_eclis": [], "empty_runs": 0}
 
+# Save checkpoint
+
 def save_checkpoint(state):
     with open(CHECKPOINT_FILE, "w", encoding="utf-8") as f:
         json.dump(state, f, indent=2)
 
-def scrub_names(text):
-    try:
-        with open("judge_names.json", "r", encoding="utf-8") as f:
-            names = json.load(f)
-    except Exception as e:
-        print(f"[WARN] Could not load judge_names.json: {e}")
-        names = []
+# Balanced name scrubber
 
-    fragments = set()
-    for name in names:
-        parts = re.findall(r"[A-Z][a-z]+(?:-[A-Z][a-z]+)?", name)
-        fragments.update(p.lower() for p in parts if len(p) > 1)
+def scrub_names(text):
+    # Match initials + surname e.g. J.J. van der Weel or W.M.G. Eekhof-de Vries
+    name_pattern = r"(?:[A-Z]\.[ ]?){1,4}(?:van der |de |van |den )?[A-Z][a-z]+(?:-[A-Z][a-z]+)?"
+
+    # Match (get.) or w.g. or (getekend) patterns
+    signature_markers = ["(get.)", "w.g.", "(getekend)"]
 
     lines = text.splitlines()
     clean_lines = []
 
     for line in lines:
-        l = line.lower()
-        if any(fragment in l for fragment in fragments):
-            line = re.sub(r"((?:[A-Z]\.[ ]?){1,4}(?:van der |de |van |den )?[A-Z][a-z]+(?:-[A-Z][a-z]+)?)", "[REDACTED]", line)
-        clean_lines.append(line.strip())
+        original_line = line
+
+        # Remove judge names while keeping structure
+        line = re.sub(name_pattern, "[REDACTED]", line)
+
+        # Remove signature prefixes
+        for marker in signature_markers:
+            line = line.replace(marker, "")
+
+        # Remove specific footers/boilerplate
+        if re.search(r"aldus vastgesteld|in tegenwoordigheid van|deze uitspraak|getekend", line, re.IGNORECASE):
+            continue
+
+        # Clean spacing
+        line = re.sub(r"\s+", " ", line).strip()
+        line = re.sub(r'^[,.:;-]+', '', line).strip()
+
+        if line:
+            clean_lines.append(line)
 
     return "\n".join(clean_lines).strip()
 
+# Fetch and walk through paginated Atom feeds
 def fetch_ecli_batch(after_timestamp=None, max_pages=5):
     collected = []
     page_url = API_URL + "?type=uitspraak&return=DOC&max=100"
@@ -62,8 +77,21 @@ def fetch_ecli_batch(after_timestamp=None, max_pages=5):
         ns = {"atom": "http://www.w3.org/2005/Atom"}
 
         for entry in root.findall("atom:entry", ns):
-            ecli = entry.find("atom:id", ns).text
-            published = entry.find("atom:published", ns).text
+            ecli_el = entry.find("atom:id", ns)
+            published_el = entry.find("atom:published", ns)
+            updated_el = entry.find("atom:updated", ns)
+
+            if ecli_el is None:
+                print("[WARN] Skipping entry with no ECLI.")
+                continue
+
+            ecli = ecli_el.text
+            published = (published_el or updated_el).text if (published_el or updated_el) is not None else None
+
+            if published is None:
+                print(f"[WARN] Skipping entry {ecli} — no published or updated timestamp.")
+                continue
+
             collected.append({"ecli": ecli, "published": published})
 
         next_link = root.find("atom:link[@rel='next']", ns)
@@ -73,6 +101,7 @@ def fetch_ecli_batch(after_timestamp=None, max_pages=5):
 
     return collected
 
+# Fetch uitspraak XML by ECLI
 def fetch_uitspraak(ecli):
     try:
         r = requests.get(f"{CONTENT_URL}?id={ecli}")
@@ -85,6 +114,8 @@ def fetch_uitspraak(ecli):
     except Exception as e:
         print(f"[ERROR] Failed to fetch content for {ecli}: {e}")
     return None
+
+# Main
 
 def main():
     checkpoint = load_checkpoint()
@@ -132,7 +163,7 @@ def main():
     if uitspraken:
         print(f"[INFO] Uploading {len(uitspraken)} to HuggingFace")
         dataset = Dataset.from_list(uitspraken)
-        dataset.push_to_hub(HF_REPO, split="train", token=hf_token)
+        dataset.push_to_hub(HF_REPO)
         checkpoint["empty_runs"] = 0
     else:
         checkpoint["empty_runs"] += 1
