@@ -1,44 +1,83 @@
-# Dutch Public Domain Texts: Rechtspraak Sync
 
-This repository contains a GitHub Action to fetch, scrub, and upload Dutch court rulings from the [Rechtspraak](https://www.rechtspraak.nl) open data feed to the [Hugging Face Hub](https://huggingface.co/).
+Dutch European Parliament Scrapers
 
-## Dataset Target
+This repository contains a combined Python script that scrapes three categories of Dutch-language content from the European Parliament website:
 
-All data is pushed to the shared dataset:
-**[`vGassen/dutch-public-domain-texts`](https://huggingface.co/datasets/vGassen/dutch-public-domain-texts)**
+- Adopted Texts
+- Verbatim Reports
+- Minutes
 
-Each record contains:
-- `url`: Canonical Rechtspraak link
-- `content`: Lightly scrubbed ruling text
-- `source`: Always set to `"Rechtspraak"`
+Each scraper navigates the Parliament's archive via "Volgende" (Next) links and extracts relevant text content. The cleaned data is pushed to the Hugging Face Hub under your account.
 
-## Structure
+---
 
-- `rechtspraak_sync.py`: Python script for fetching and uploading court rulings.
-- `rechtspraak_sync.yml`: GitHub Actions workflow for automated sync.
-- `requirements.txt`: Python dependencies.
-- `judge_names.json`: List of known judge names used for redaction (you must add this manually).
+📘 Adopted Texts
 
-## Setup
+Starting URL:
+https://www.europarl.europa.eu/doceo/document/TA-5-1999-07-21-TOC_NL.html
 
-1. Clone this repository.
-2. Add your `judge_names.json` file (UTF-8 encoded).
-3. Add a GitHub Secret:
-   - `HF_TOKEN`: your Hugging Face write token.
+- Follows chronological navigation through “Volgende” links.
+- Extracts content by removing `-TOC` from the page URL.
+- Automatically corrects malformed URLs that include invalid term numbers (e.g. `TA-0-...`) based on the date.
+- Outputs data to: vGassen/Dutch-European-Parliament-Adopted-Texts.
 
-## Running Locally
+---
 
-```bash
+🗣️ Verbatim Reports
+
+Starting URL:
+https://www.europarl.europa.eu/doceo/document/CRE-4-1996-04-15-TOC_NL.html
+
+- Navigates using “Volgende” links.
+- Drops `-TOC` from URLs to access full documents.
+- Parses HTML or XML for content, and filters paragraphs using `langdetect` to retain only Dutch text.
+- Outputs data to: vGassen/Dutch-European-Parliament-Verbatim-Reports.
+
+---
+
+📝 Minutes
+
+Starting URL:
+https://www.europarl.europa.eu/doceo/document/PV-5-2003-05-12-TOC_NL.html
+
+- Navigates forward using “Volgende”.
+- Downloads XML format where available, falling back to HTML.
+- Extracts sections such as debates, votes, and agendas.
+- Outputs data to: vGassen/Dutch-European-Parliament-Minutes.
+
+---
+
+🔧 Usage
+
+Requirements
+
+- Python 3.8+
+- Dependencies listed in `requirements.txt`
+
+Install and Run
+
 pip install -r requirements.txt
-export HF_TOKEN=your_token_here
-python rechtspraak_sync.py
-```
 
-## Running in GitHub Actions
+# Set credentials for Hugging Face
+export HF_USERNAME=<your_username>
+export HF_TOKEN=<your_token>
 
-The sync runs automatically every 3 hours via cron. You can also trigger it manually from the Actions tab.
+# Run the scraper
+python scraper_european_parliament.py
 
-## License
+Each dataset will be created or updated on Hugging Face Hub under your username.
 
-This repo contains only public domain legal content. Scripts and workflows are MIT licensed.
+---
 
+🛠️ Automation
+
+If you want to automate the script with GitHub Actions, set the HF_USERNAME and HF_TOKEN as repository secrets. This will enable periodic scraping and automatic uploads to the Hugging Face Hub.
+
+---
+
+⚖️ License
+
+This code is released under the MIT License. 
+
+# Note that the scraped content is subject to the European Parliament's reuse policy:
+https://www.europarl.europa.eu/legal-notice/en/#reuse
