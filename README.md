@@ -1,5 +1,4 @@
-
-Dutch European Parliament Scrapers
+# European Parliament Dutch Language Scrapers
 
 This repository contains a combined Python script that scrapes three categories of Dutch-language content from the European Parliament website:
 
@@ -11,7 +10,7 @@ Each scraper navigates the Parliament's archive via "Volgende" (Next) links and 
 
 ---
 
-📘 Adopted Texts
+# 📘 Adopted Texts
 
 Starting URL:
 https://www.europarl.europa.eu/doceo/document/TA-5-1999-07-21-TOC_NL.html
@@ -23,7 +22,7 @@ https://www.europarl.europa.eu/doceo/document/TA-5-1999-07-21-TOC_NL.html
 
 ---
 
-🗣️ Verbatim Reports
+# 🗣️ Verbatim Reports
 
 Starting URL:
 https://www.europarl.europa.eu/doceo/document/CRE-4-1996-04-15-TOC_NL.html
@@ -35,7 +34,7 @@ https://www.europarl.europa.eu/doceo/document/CRE-4-1996-04-15-TOC_NL.html
 
 ---
 
-📝 Minutes
+# 📝 Minutes
 
 Starting URL:
 https://www.europarl.europa.eu/doceo/document/PV-5-2003-05-12-TOC_NL.html
@@ -47,7 +46,7 @@ https://www.europarl.europa.eu/doceo/document/PV-5-2003-05-12-TOC_NL.html
 
 ---
 
-🔧 Usage
+# 🔧 Usage
 
 Requirements
 
@@ -69,15 +68,15 @@ Each dataset will be created or updated on Hugging Face Hub under your username.
 
 ---
 
-🛠️ Automation
+# 🛠️ Automation
 
 If you want to automate the script with GitHub Actions, set the HF_USERNAME and HF_TOKEN as repository secrets. This will enable periodic scraping and automatic uploads to the Hugging Face Hub.
 
 ---
 
-⚖️ License
+# ⚖️ License
 
 This code is released under the MIT License. 
 
-# Note that the scraped content is subject to the European Parliament's reuse policy:
+Note that the scraped content is subject to the European Parliament's reuse policy:
 https://www.europarl.europa.eu/legal-notice/en/#reuse
