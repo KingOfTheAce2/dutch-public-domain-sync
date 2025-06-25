@@ -8,6 +8,37 @@ This repository contains a combined Python script that scrapes three categories 
 
 Each scraper navigates the Parliament's archive via "Volgende" (Next) links and extracts relevant text content. The cleaned data is pushed to the Hugging Face Hub under your account.
 
+**Status: Work in Progress**
+
+Additional datasets are planned for inclusion. The tables below list the collections that will be added.
+
+### EU
+
+| Collection | Location | GitHub |
+|------------|----------|--------|
+| Curia (WIP) | ? | |
+| European Parliament  Minutes | ? | <https://github.com/KingOfTheAce2/Euro-Parl-Minute-Scraper-Test> |
+| European Parliament  Adopted Texts | ? | <https://github.com/KingOfTheAce2/Euro-Parl-Adopted-Texts-Scraper> |
+| European Parliament Verbatim Report | ? | <https://github.com/KingOfTheAce2/Euro-Parl-Verbatim-Report-Scraper> |
+
+### Netherlands
+
+| Collection | Location | GitHub |
+|------------|----------|--------|
+| Rechtspraak (WIP) | ? | <https://github.com/KingOfTheAce2/rechtspraak-sync> |
+| Officiële publicates (not started) | <https://repository.overheid.nl/frbr/> | |
+| Samenwerkende Catalogi (not started) | <https://repository.overheid.nl/frbr/> | |
+| Statengeneraal Digitaal (WIP) | <https://repository.overheid.nl/frbr/> | <https://github.com/KingOfTheAce2/Statengeneraal-Digitaal-scraper> |
+| Tuchtrecht (WIP) | <https://repository.overheid.nl/frbr/> | <https://github.com/KingOfTheAce2/Dutch-Disciplinary-Law-Tuchtrecht> |
+| Verdragenbank (not started) | <https://repository.overheid.nl/frbr/> | |
+| PLOOI (not started) | <https://repository.overheid.nl/frbr/> | |
+| CVDR (not started) | <https://zoekservice.overheid.nl/> | |
+| Basiswettenbestand (WIP) | <https://zoekservice.overheid.nl/> | |
+| Europese Ricthlijnen (not started) | <https://zoekservice.overheid.nl/> | |
+| PUC Open Data (not started) | <https://zoekservice.overheid.nl/> | |
+| Wetgevingskalender (not started) | <https://zoekservice.overheid.nl/> | |
+| Staatsalmanak (not started) | <https://zoekservice.overheid.nl/> | |
+
 ---
 
 # 📘 Adopted Texts
