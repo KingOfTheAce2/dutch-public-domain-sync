@@ -12,11 +12,11 @@ Each scraper navigates the Parliament's archive via "Volgende" (Next) links and 
 
 Additional datasets are planned for inclusion. The tables below list the collections that will be added.
 
-### EU
+### European Union
 
 | Collection | Location | GitHub |
 |------------|----------|--------|
-| Curia (WIP) | ? | |
+| Curia (WIP) | <https://curia.europa.eu/jcms/jcms/Jo2_7045/nl/> | |
 | European Parliament  Minutes | ? | <https://github.com/KingOfTheAce2/Euro-Parl-Minute-Scraper-Test> |
 | European Parliament  Adopted Texts | ? | <https://github.com/KingOfTheAce2/Euro-Parl-Adopted-Texts-Scraper> |
 | European Parliament Verbatim Report | ? | <https://github.com/KingOfTheAce2/Euro-Parl-Verbatim-Report-Scraper> |
@@ -25,8 +25,8 @@ Additional datasets are planned for inclusion. The tables below list the collect
 
 | Collection | Location | GitHub |
 |------------|----------|--------|
-| Rechtspraak (WIP) | ? | <https://github.com/KingOfTheAce2/rechtspraak-sync> |
-| Officiële publicates (not started) | <https://repository.overheid.nl/frbr/> | |
+| Rechtspraak (WIP) | <https://www.rechtspraak.nl/Uitspraken/Paginas/Open-Data.aspx> | <https://github.com/KingOfTheAce2/rechtspraak-sync> |
+| Officiële publicates (WIP) | <https://repository.overheid.nl/frbr/> | <https://github.com/KingOfTheAce2/Dutch-Lokale-Bekendmakingen-Sync> |
 | Samenwerkende Catalogi (not started) | <https://repository.overheid.nl/frbr/> | |
 | Statengeneraal Digitaal (WIP) | <https://repository.overheid.nl/frbr/> | <https://github.com/KingOfTheAce2/Statengeneraal-Digitaal-scraper> |
 | Tuchtrecht (WIP) | <https://repository.overheid.nl/frbr/> | <https://github.com/KingOfTheAce2/Dutch-Disciplinary-Law-Tuchtrecht> |
